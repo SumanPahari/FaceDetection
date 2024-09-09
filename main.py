@@ -18,19 +18,27 @@ def read_root(name:str):
 @app.post("/login")
 def read_root(username: str, password: str):
     try:
+        # Load the Excel file
         df = pd.read_excel('userdata.xlsx')
-        print(f"LEN : {len(df)}")
+
+        # Ensure the USERNAME and PASSWORD columns are treated as strings
+        df['Username'] = df['Username'].astype(str).str.strip().str.lower()
+        df['Password'] = df['Password'].astype(str).str.strip().str.lower()
+
+        # Strip any extra spaces and convert inputs to lowercase for comparison
+        username = username.strip().lower()
+        password = password.strip().lower()
 
         # Filter the DataFrame to find the matching row
-        matching_row = df.loc[(df['USERNAME'] == username) & (df['PASSWORD'] == password)]
-        
+        matching_row = df.loc[(df['Username'] == username) & (df['Password'] == password)]
+
         # If a match is found, return the entire row
         if not matching_row.empty:
-            return {'message': 'Login successful', 'row': matching_row.to_dict('records')[0]}
+            return {"status": True, 'message': 'Login successful', 'row': matching_row.to_dict('records')[0]}
         else:
-            return {'message': 'Invalid username or password'}
+            return {"status": False,'message': 'Invalid username or password'}
     except Exception as e:
-        return {'message': f'An error occurred: {str(e)}'}
+        return {"status": False,'message': f'An error occurred: {str(e)}'}
 
 @app.post("/uploadimage/")
 async def upload_image(file: UploadFile = File(...)):
