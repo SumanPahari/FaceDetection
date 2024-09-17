@@ -98,7 +98,7 @@ def read_root(useridinfo: str, lat: str, longi: str):
 
 
 @app.post("/uploadimage_base/")
-async def upload_image(image_base64: str, filename: str):
+async def upload_image_base(image_base64: str, filename: str):
     try:
         # Decode the base64 image
         image_bytes = base64.b64decode(image_base64)
@@ -111,6 +111,23 @@ async def upload_image(image_base64: str, filename: str):
         return {"message": f"Image {filename} uploaded successfully!", "file_path": image_path}
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Image upload failed: {str(e)}")
+
+
+@app.post("/uploadimage_json/")
+async def upload_image_json(image_data: ImageUpload):
+    try:
+        # Decode the base64 image
+        image_bytes = base64.b64decode(image_data.image_base64)
+
+        # Save the image to a file
+        image_path = os.path.join(UPLOAD_FOLDER, image_data.filename)
+        with open(image_path, "wb") as image_file:
+            image_file.write(image_bytes)
+
+        return {"message": f"Image {image_data.filename} uploaded successfully!", "file_path": image_path}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Image upload failed: {str(e)}")
+
 
     
     
