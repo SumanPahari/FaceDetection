@@ -1,14 +1,23 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 import pandas as pd
 import os
 import shutil
+import base64
 
 app = FastAPI()
 UPLOAD_FOLDER = 'upload_image'
 
 
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
+
+# Define a Pydantic model to receive base64 image data
+class ImageUpload(BaseModel):
+    image_base64: str
+    filename: str
 
 @app.post("/getname")
 def read_root(name:str):
@@ -86,6 +95,23 @@ def read_root(useridinfo: str, lat: str, longi: str):
         df.to_excel('userdata2.xlsx', index=False)
                 
         return {'message': 'else'}
+
+
+@app.post("/uploadimage_base/")
+async def upload_image(image_base64: str, filename: str):
+    try:
+        # Decode the base64 image
+        image_bytes = base64.b64decode(image_base64)
+
+        # Save the image to a file
+        image_path = os.path.join(UPLOAD_FOLDER, filename)
+        with open(image_path, "wb") as image_file:
+            image_file.write(image_bytes)
+
+        return {"message": f"Image {filename} uploaded successfully!", "file_path": image_path}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Image upload failed: {str(e)}")
+
     
     
     
