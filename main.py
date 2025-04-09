@@ -12,6 +12,7 @@ import os
 import shutil
 from datetime import datetime
 import pandas as pd
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 import openpyxl
 app = FastAPI()
