@@ -142,6 +142,8 @@ async def check_in(
     check_in_time: str = Form(...)
 ):
     try:
+        import gc
+        gc.collect()
         # Generate a unique, readable filename for the attendance image
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         attendance_filename = f"{userid}_checkin_{timestamp}.jpg"
@@ -170,7 +172,8 @@ async def check_in(
 
         # Use DeepFace for precise facial verification
         try:
-            result = DeepFace.verify(reference_image_path, attendance_image_path, model_name="SFace",detector_backend="opencv")
+            result = DeepFace.verify(reference_image_path, attendance_image_path, model_name="SFace",
+                                     enforce_detection=False,detector_backend="opencv")
             if result.get('verified', False):  # Default to False if 'verified' key is missing
                 # Images match, update Excel with all provided details
                 df = pd.read_excel('./details1.xlsx')
