@@ -167,7 +167,7 @@ async def check_in(
 
         # Use DeepFace for precise facial verification
         try:
-            result = DeepFace.verify(reference_image_path, attendance_image_path, model_name="Facenet512",device="cpu")
+            result = DeepFace.verify(reference_image_path, attendance_image_path, model_name="Facenet512",backend="dlib")
             if result.get('verified', False):  # Default to False if 'verified' key is missing
                 # Images match, update Excel with all provided details
                 df = pd.read_excel('./details1.xlsx')
