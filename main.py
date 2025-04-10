@@ -173,9 +173,7 @@ async def check_in(
         # Use DeepFace for precise facial verification
         try:
 
-            result = DeepFace.verify(reference_image_path, attendance_image_path, model_name="Facenet",
-
-                                     enforce_detection=False,detector_backend="opencv")
+            result = DeepFace.verify(reference_image_path, attendance_image_path, model_name="Facenet",enforce_detection=False,detector_backend="opencv")
             if result.get('verified', False):  # Default to False if 'verified' key is missing
                 # Images match, update Excel with all provided details
                 df = pd.read_excel('./details1.xlsx')
@@ -192,7 +190,7 @@ async def check_in(
         return {"message": f"No check-in details updated, upload failed: {str(e)}","status":False}
         
 @app.post("/check_out/")
-def check_out(check_out: CheckOut):
+def check_out(userid: str, date: str, time: str):
         try:
             # Load the Excel file
             df = pd.read_excel('./details1.xlsx')
@@ -202,9 +200,9 @@ def check_out(check_out: CheckOut):
             df['date'] = df['date'].astype(str).str.strip().str.lower()           
 
             # Assuming the check-in time is stored in the last row of the DataFrame
-            userid=str(check_out.userid)
-            date=str(check_out.date)
-            check_out_time=str(check_out.check_out_time)
+            userid=str(userid)
+            date=str(date)
+            check_out_time=str(time)
 
             userid = userid.strip().lower()
             date = date.strip().lower()
