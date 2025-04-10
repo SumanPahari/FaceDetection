@@ -181,15 +181,15 @@ async def check_in(
                 df = pd.read_excel('./details1.xlsx')
                 df.loc[len(df)] = [userid, date, lat, long, check_in_time, '']
                 df.to_excel('./details1.xlsx', index=False)
-                return {"message": f"Check-in recorded for user {userid}!", "file_path": attendance_image_path}
+                return {"message": f"Check-in recorded for user {userid}!", "file_path": attendance_image_path,"status":True}
             else:
                 # Images don't match, no update to Excel
-                return {"message": "No check-in details updated, user invalid"}
+                return {"message": "No check-in details updated, user invalid","status":False}
         except Exception as e:
-            return {"message": f"No check-in details updated, image comparison failed: {str(e)}"}
+            return {"message": f"No check-in details updated, image comparison failed: {str(e)}","status":False}
 
     except Exception as e:
-        return {"message": f"No check-in details updated, upload failed: {str(e)}"}
+        return {"message": f"No check-in details updated, upload failed: {str(e)}","status":False}
         
 @app.post("/check_out/")
 def check_out(check_out: CheckOut):
