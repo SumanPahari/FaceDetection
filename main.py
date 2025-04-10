@@ -13,6 +13,9 @@ import shutil
 from datetime import datetime
 import pandas as pd
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+import torch
+# Force torch to use CPU
+torch.cuda.is_available = lambda : False
 
 import openpyxl
 app = FastAPI()
@@ -167,7 +170,7 @@ async def check_in(
 
         # Use DeepFace for precise facial verification
         try:
-            result = DeepFace.verify(reference_image_path, attendance_image_path, model_name="Facenet512",backend="dlib")
+            result = DeepFace.verify(reference_image_path, attendance_image_path, model_name="Facenet512",device='cpu')
             if result.get('verified', False):  # Default to False if 'verified' key is missing
                 # Images match, update Excel with all provided details
                 df = pd.read_excel('./details1.xlsx')
